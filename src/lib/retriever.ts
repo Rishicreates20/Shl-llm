@@ -105,7 +105,12 @@ export async function retrieveTopK(query: string, k: number = 10): Promise<Catal
   }
 
   const scoredItems = catalog.map(item => {
-    const similarity = item.embedding ? cosineSimilarity(queryEmbedding!, item.embedding) : 0;
+    let similarity = item.embedding ? cosineSimilarity(queryEmbedding!, item.embedding) : 0;
+    
+    if (item.test_type && query.toLowerCase().includes(item.test_type.toLowerCase())) {
+        similarity += 0.2; // Add weight for matching test_type
+    }
+
     return { item, similarity };
   });
 
