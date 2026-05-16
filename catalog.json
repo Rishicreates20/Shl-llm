@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Occupational Personality Questionnaire (OPQ32r)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/occupational-personality-questionnaire-opq32r/",
+    "test_type": "Personality",
+    "description": "The OPQ32r measures personality traits that influence performance at work. It provides insights into how someone will fit into a team, their working style, and their leadership potential. Best for professional, graduate, and managerial roles."
+  },
+  {
+    "name": "Verify G+ (General Ability)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/verify-g-plus-general-ability/",
+    "test_type": "Ability",
+    "description": "Verify G+ assesses three types of cognitive ability: Numerical, Deductive, and Inductive reasoning. It provides a comprehensive view of an individual's general cognitive ability, which is strongly linked to job performance in most roles."
+  },
+  {
+    "name": "Verify Numerical Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/verify-numerical-reasoning/",
+    "test_type": "Ability",
+    "description": "Assesses the ability to make correct decisions or inferences from numerical or statistical data. Ideal for roles involving financial analysis, data interpretation, and business analytics."
+  },
+  {
+    "name": "Verify Deductive Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/verify-deductive-reasoning/",
+    "test_type": "Ability",
+    "description": "Measures the ability to draw logical conclusions based on provided information. Useful for roles requiring logical thinking and problem-solving, such as software development and engineering."
+  },
+  {
+    "name": "Verify Inductive Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/verify-inductive-reasoning/",
+    "test_type": "Ability",
+    "description": "Measures the ability to work with incomplete information and create solutions to novel problems from first principles. Important for technical, engineering, and analytical roles."
+  },
+  {
+    "name": "Verify Verbal Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/verify-verbal-reasoning/",
+    "test_type": "Ability",
+    "description": "Evaluates the ability to read, understand, and extract key information from complex written texts. Essential for managerial, legal, and communication-heavy roles."
+  },
+  {
+    "name": "Scenarios (Managerial Judgement)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/scenarios-managerial/",
+    "test_type": "Situational Judgement",
+    "description": "A situational judgement test that assesses a candidate's managerial judgement and decision-making skills in realistic, work-related situations. Designed for assessing leadership capabilities."
+  },
+  {
+    "name": "Java 8 (New)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/java-8/",
+    "test_type": "Knowledge",
+    "description": "Measures knowledge and skills in Java 8 programming, including syntax, lambdas, streams, and concurrency. Ideal for mid-level to senior Java developers."
+  },
+  {
+    "name": "Python 3 Developer",
+    "url": "https://www.shl.com/solutions/products/product-catalog/python-3/",
+    "test_type": "Knowledge",
+    "description": "Assesses proficiency in Python 3 programming, including data structures, object-oriented concepts, and standard libraries. Suitable for backend developers and data engineers."
+  },
+  {
+    "name": "Customer Contact Scenario",
+    "url": "https://www.shl.com/solutions/products/product-catalog/customer-contact-scenario/",
+    "test_type": "Situational Judgement",
+    "description": "Evaluates how candidates handle typical customer service interactions. Tests for customer focus, patience, and problem-solving in frontline roles."
+  },
+  {
+    "name": "Sales Scenarios",
+    "url": "https://www.shl.com/solutions/products/product-catalog/sales-scenarios/",
+    "test_type": "Situational Judgement",
+    "description": "Assesses judgement in sales contexts, measuring a candidate's approach to identifying opportunities, handling objections, and closing deals."
+  },
+  {
+    "name": "Universal Competency Framework (UCF)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/shl-universal-competency-framework/",
+    "test_type": "Personality",
+    "description": "Provides a comprehensive mapping of workplace behaviors aligned to organizational needs. Often used in conjunction with OPQ32 to map personality to specific job competencies."
+  },
+  {
+    "name": "Motivational Questionnaire (MQ)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/motivational-questionnaire-mq/",
+    "test_type": "Personality",
+    "description": "Explores the situations and conditions that increase or decrease an individual's motivation at work. Useful for understanding what drives a candidate and how they prefer to be managed."
+  },
+  {
+    "name": "Cognitive Ability Test (General)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/cognitive-ability-test/",
+    "test_type": "Ability",
+    "description": "A short, adaptive test measuring general cognitive ability, providing a quick read on reasoning and problem-solving potential for high-volume entry-level hiring."
+  },
+  {
+    "name": "Data Science Knowledge Assessment",
+    "url": "https://www.shl.com/solutions/products/product-catalog/data-science-knowledge/",
+    "test_type": "Knowledge",
+    "description": "Evaluates foundational and advanced concepts in data science, including machine learning algorithms, statistics, and data manipulation. Ideal for data scientists and analysts."
+  }
+]
