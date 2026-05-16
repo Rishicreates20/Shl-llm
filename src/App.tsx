@@ -4,8 +4,11 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from './lib/firebase';
 
 type Message = {
+// ...
   role: string;
   content: string;
   recommendations?: any[];
@@ -20,6 +23,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'ok' | 'loading' | 'error'>('loading');
   const [shortlist, setShortlist] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,6 +37,32 @@ export default function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setAuthReady(true);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const login = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      // Optional: clear shortlist or messages on logout
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -91,9 +122,27 @@ export default function App() {
                 )}
               </div>
             </div>
-            <div className="text-left sm:text-right mt-4 sm:mt-0">
-              <p className="text-3xl sm:text-5xl font-black tracking-tighter">SHL</p>
-              <p className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Assessment Engine</p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-4 sm:mt-0">
+              {authReady && (
+                <div className="flex items-center gap-2 border-[3px] border-black p-2 bg-zinc-50 mr-4">
+                  {user ? (
+                    <>
+                      <div className="text-xs font-bold truncate max-w-[150px]">{user.displayName || user.email}</div>
+                      <button onClick={logout} className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-1 hover:bg-white hover:text-black hover:border-black border-[2px] border-transparent transition-all">
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={login} className="text-xs font-black uppercase tracking-widest bg-black text-white px-4 py-2 hover:bg-white hover:text-black border-[2px] border-transparent hover:border-black transition-all">
+                      Login
+                    </button>
+                  )}
+                </div>
+              )}
+              <div>
+                <p className="text-3xl sm:text-5xl font-black tracking-tighter">SHL</p>
+                <p className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Assessment Engine</p>
+              </div>
             </div>
           </div>
         </div>
@@ -192,27 +241,38 @@ export default function App() {
         {/* Input Area */}
         <div className="border-t-[3px] border-black p-4 sm:p-6 bg-zinc-100 flex-shrink-0">
           <div className="max-w-5xl mx-auto flex flex-col sm:flex-row gap-4">
-            <input 
-              type="text" 
-              value={input}
-              onChange={e => {
-                const newValue = e.target.value;
-                if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
-                  setInput(newValue);
-                }
-              }}
-              onKeyDown={e => e.key === 'Enter' && sendMessage()}
-              placeholder="DEFINE REQUIREMENTS..."
-              className="flex-1 px-5 py-4 border-[3px] border-black font-bold placeholder-zinc-400 focus:outline-none focus:ring-0 shadow-[4px_4px_0_0_#000] bg-white text-sm sm:text-base transition-all focus:shadow-[2px_2px_0_0_#000] focus:translate-x-[2px] focus:translate-y-[2px]"
-              disabled={isLoading || status !== 'ok'}
-            />
-            <button 
-              onClick={sendMessage}
-              disabled={!input.trim() || isLoading || status !== 'ok'}
-              className="border-[3px] border-black bg-black text-white px-8 py-4 font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0_0_#000] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] flex items-center justify-center min-w-[140px]"
-            >
-              Execute
-            </button>
+            {!user ? (
+              <div className="flex-1 px-5 py-4 border-[3px] border-black bg-white text-center font-bold text-sm sm:text-base flex flex-col items-center justify-center gap-2">
+                <p>Please log in to use the Conversational Agent.</p>
+                <button onClick={login} className="px-6 py-2 bg-black text-white uppercase text-xs tracking-widest hover:bg-white hover:text-black border-[2px] border-transparent hover:border-black transition-colors">
+                  Login with Google
+                </button>
+              </div>
+            ) : (
+              <>
+                <input 
+                  type="text" 
+                  value={input}
+                  onChange={e => {
+                    const newValue = e.target.value;
+                    if (/^[a-zA-Z0-9\s]*$/.test(newValue)) {
+                      setInput(newValue);
+                    }
+                  }}
+                  onKeyDown={e => e.key === 'Enter' && sendMessage()}
+                  placeholder="DEFINE REQUIREMENTS..."
+                  className="flex-1 px-5 py-4 border-[3px] border-black font-bold placeholder-zinc-400 focus:outline-none focus:ring-0 shadow-[4px_4px_0_0_#000] bg-white text-sm sm:text-base transition-all focus:shadow-[2px_2px_0_0_#000] focus:translate-x-[2px] focus:translate-y-[2px]"
+                  disabled={isLoading || status !== 'ok'}
+                />
+                <button 
+                  onClick={sendMessage}
+                  disabled={!input.trim() || isLoading || status !== 'ok'}
+                  className="border-[3px] border-black bg-black text-white px-8 py-4 font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0_0_#000] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] flex items-center justify-center min-w-[140px]"
+                >
+                  Execute
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
