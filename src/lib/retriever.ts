@@ -22,7 +22,14 @@ function getAIClient() {
     if (!process.env.GEMINI_API_KEY) {
         throw new Error("GEMINI_API_KEY is not set.");
     }
-    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    ai = new GoogleGenAI({ 
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
   }
   return ai;
 }
@@ -30,24 +37,27 @@ function getAIClient() {
 async function doLoadCatalog() {
   const catalogPath = path.join(process.cwd(), 'catalog.json');
   const fileContent = fs.readFileSync(catalogPath, 'utf-8');
-  catalog = JSON.parse(fileContent);
+  const parsedCatalog: ScrapedCatalogItem[] = JSON.parse(fileContent);
 
   const aiClient = getAIClient();
   
   console.log('Computing embeddings for catalog...');
-  const contents = catalog.map(item => `${item.name}: ${item.description}`);
+  const contents = parsedCatalog.map(item => `${item.name}: ${item.description}`);
   
   try {
     const response = await aiClient.models.embedContent({
-      model: 'text-embedding-004',
+      model: 'gemini-embedding-2-preview',
       contents: contents,
     });
     
     if (response.embeddings) {
         response.embeddings.forEach((emb, i) => {
-            catalog[i].embedding = emb.values;
+            parsedCatalog[i].embedding = emb.values;
         });
     }
+    
+    // Only set global catalog on success
+    catalog = parsedCatalog;
   } catch(e: any) {
       console.error("Failed to compute embeddings", e);
       throw e;
@@ -88,7 +98,7 @@ export async function retrieveTopK(query: string, k: number = 10): Promise<Catal
   
   try {
       const queryEmbeddingRes = await aiClient.models.embedContent({
-          model: 'text-embedding-004',
+          model: 'gemini-embedding-2-preview',
           contents: [query]
       });
       queryEmbedding = queryEmbeddingRes.embeddings?.[0]?.values;

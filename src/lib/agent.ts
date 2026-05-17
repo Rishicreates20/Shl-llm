@@ -36,7 +36,14 @@ function getAIClient() {
     if (!process.env.GEMINI_API_KEY) {
         throw new Error("GEMINI_API_KEY is not set.");
     }
-    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    ai = new GoogleGenAI({ 
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
   }
   return ai;
 }
