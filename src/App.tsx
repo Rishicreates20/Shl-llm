@@ -91,25 +91,25 @@ export default function App() {
       <div className="flex-1 border-[3px] border-black flex flex-col relative bg-white overflow-hidden">
         {/* Header */}
         <div className="flex border-b-[3px] border-black flex-shrink-0">
-          <div className="w-12 sm:w-16 border-r-[3px] border-black flex items-center justify-center p-2 sm:p-4 bg-zinc-100">
-            <span className="vertical-text font-black text-xs sm:text-sm uppercase tracking-[0.3em]">SHL v.1</span>
+          <div className="w-10 sm:w-12 border-r-[3px] border-black flex items-center justify-center p-2 bg-zinc-100">
+            <span className="vertical-text font-black text-xs uppercase tracking-[0.3em]">SHL v.1</span>
           </div>
-          <div className="flex-1 p-4 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white">
+          <div className="flex-1 p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white">
             <div className="space-y-1">
-              <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-black text-white px-2 py-1 inline-block">System Status</p>
-              <div className="flex items-center space-x-3 mt-2">
-                <p className="text-lg sm:text-xl font-bold italic serif-italic">Conversational Agent</p>
+              <p className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-1 inline-block">System Status</p>
+              <div className="flex items-center space-x-2 mt-1">
+                <p className="text-base sm:text-lg font-bold italic serif-italic">Conversational Agent</p>
                 {status === 'ok' ? (
-                   <span className="h-3 w-3 bg-black rounded-full" title="Systems Check OK"></span>
+                   <span className="h-2.5 w-2.5 bg-black rounded-full" title="Systems Check OK"></span>
                 ) : status === 'loading' ? (
-                   <span className="h-3 w-3 bg-zinc-400 rounded-full animate-pulse" title="Booting..."></span>
+                   <span className="h-2.5 w-2.5 bg-zinc-400 rounded-full animate-pulse" title="Booting..."></span>
                 ) : (
-                   <span className="h-3 w-3 bg-red-600 rounded-full" title="Error"></span>
+                   <span className="h-2.5 w-2.5 bg-red-600 rounded-full" title="Error"></span>
                 )}
               </div>
-              <div className="mt-4 flex items-center gap-3">
-                <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 whitespace-nowrap">Search Bias:</label>
-                <div className="flex flex-col w-48">
+              <div className="mt-2 flex items-center gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 whitespace-nowrap">Search Bias:</label>
+                <div className="flex flex-col w-32 sm:w-40">
                   <input
                     type="range"
                     min="0"
@@ -120,15 +120,15 @@ export default function App() {
                     className="w-full h-1 bg-zinc-200 rounded-none appearance-none cursor-pointer"
                   />
                   <div className="flex justify-between text-[8px] font-black uppercase text-zinc-400 mt-1">
-                    <span>Description (0)</span>
-                    <span>Test Type (1)</span>
+                    <span>Desc (0)</span>
+                    <span>Type (1)</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-4 sm:mt-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-3 sm:mt-0">
               <div>
-                <p className="text-3xl sm:text-5xl font-black tracking-tighter">SHL</p>
+                <p className="text-2xl sm:text-3xl font-black tracking-tighter">SHL</p>
                 <p className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Assessment Engine</p>
               </div>
             </div>
@@ -251,8 +251,8 @@ export default function App() {
         </div>
 
         {/* Input Area */}
-        <div className="border-t-[3px] border-black p-4 sm:p-6 bg-zinc-100 flex-shrink-0">
-          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row gap-4">
+        <div className="border-t-[3px] border-black p-3 sm:p-4 bg-zinc-100 flex-shrink-0">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row gap-3">
             <input 
               type="text" 
               value={input}
@@ -264,13 +264,13 @@ export default function App() {
               }}
               onKeyDown={e => e.key === 'Enter' && sendMessage()}
               placeholder="DEFINE REQUIREMENTS..."
-              className="flex-1 px-5 py-4 border-[3px] border-black font-bold placeholder-zinc-400 focus:outline-none focus:ring-0 shadow-[4px_4px_0_0_#000] bg-white text-sm sm:text-base transition-all focus:shadow-[2px_2px_0_0_#000] focus:translate-x-[2px] focus:translate-y-[2px]"
+              className="flex-1 px-4 py-3 border-[3px] border-black font-bold placeholder-zinc-400 focus:outline-none focus:ring-0 shadow-[4px_4px_0_0_#000] bg-white text-sm transition-all focus:shadow-[2px_2px_0_0_#000] focus:translate-x-[2px] focus:translate-y-[2px]"
               disabled={isLoading || status !== 'ok'}
             />
             <button 
               onClick={sendMessage}
               disabled={!input.trim() || isLoading || status !== 'ok'}
-              className="border-[3px] border-black bg-black text-white px-8 py-4 font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0_0_#000] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] flex items-center justify-center min-w-[140px]"
+              className="border-[3px] border-black bg-black text-white px-6 py-3 font-black uppercase text-sm tracking-widest hover:bg-white hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0_0_#000] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] flex items-center justify-center min-w-[120px]"
             >
               Execute
             </button>
