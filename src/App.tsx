@@ -94,7 +94,7 @@ export default function App() {
           <div className="w-10 sm:w-12 border-r-[3px] border-black flex items-center justify-center p-2 bg-zinc-100">
             <span className="vertical-text font-black text-xs uppercase tracking-[0.3em]">SHL v.1</span>
           </div>
-          <div className="flex-1 p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white">
+          <div className="flex-1 p-5 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white">
             <div className="space-y-1">
               <p className="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-1 inline-block">System Status</p>
               <div className="flex items-center space-x-2 mt-1">
@@ -126,7 +126,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-3 sm:mt-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-6 sm:mt-0">
               <div>
                 <p className="text-2xl sm:text-3xl font-black tracking-tighter">SHL</p>
                 <p className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Assessment Engine</p>
