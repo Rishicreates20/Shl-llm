@@ -86,6 +86,16 @@ export default function App() {
     }
   };
 
+  const handleReset = () => {
+    setMessages([{
+      role: "assistant",
+      content: "Hi! I am the SHL Converational Assessment Recommender. Tell me about the role you are hiring for, and I will help you find the right assessments."
+    }]);
+    setShortlist([]);
+    setInput('');
+    setShowComparison(false);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#f4f4f4] text-black p-4 sm:p-10 select-none font-sans">
       <div className="flex-1 border-[3px] border-black flex flex-col relative bg-white overflow-hidden">
@@ -119,7 +129,7 @@ export default function App() {
                     onChange={(e) => setTypeWeight(parseFloat(e.target.value))}
                     className="w-full h-1 bg-zinc-200 rounded-none appearance-none cursor-pointer"
                   />
-                  <div className="flex justify-between text-[8px] font-black uppercase text-zinc-400 mt-1">
+                  <div className="flex justify-between text-[8px] font-black uppercase text-zinc-600 mt-1">
                     <span>Desc (0)</span>
                     <span>Type (1)</span>
                   </div>
@@ -127,9 +137,15 @@ export default function App() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-6 sm:mt-0">
+              <button 
+                onClick={handleReset}
+                className="border-[2px] border-black px-4 py-2 font-black uppercase text-xs hover:bg-black hover:text-white transition-colors"
+              >
+                New Chat
+              </button>
               <div>
                 <p className="text-2xl sm:text-3xl font-black tracking-tighter">SHL</p>
-                <p className="text-[10px] font-bold uppercase tracking-tighter opacity-50">Assessment Engine</p>
+                <p className="text-[10px] font-bold uppercase tracking-tighter text-zinc-600">Assessment Engine</p>
               </div>
             </div>
           </div>
@@ -279,7 +295,7 @@ export default function App() {
       </div>
       
       {/* Footer */}
-      <div className="flex justify-between mt-4 text-[10px] font-black uppercase tracking-[0.4em] opacity-40">
+      <div className="flex justify-between mt-4 text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600">
         <span className="hidden sm:inline">Terminal.SHL.01</span>
         <span>©2026 SHL Labs</span>
       </div>
