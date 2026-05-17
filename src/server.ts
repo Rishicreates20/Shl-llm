@@ -19,17 +19,17 @@ async function startServer() {
   // Chat endpoint
   app.post("/chat", async (req, res) => {
     try {
-      const { messages } = req.body;
+      const { messages, typeWeight } = req.body;
       if (!Array.isArray(messages)) {
         return res.status(400).json({ error: "messages must be an array" });
       }
 
-      const response = await chatAgent(messages);
+      const response = await chatAgent(messages, typeWeight);
       res.json(response);
     } catch (error: any) {
       console.error("Error in /chat:", error);
       if (error?.message?.includes("API key not valid") || error?.message?.includes("API_KEY_INVALID") || error?.message?.includes("API_KEY")) {
-         return res.status(401).json({ error: "Invalid API key. Please configure a valid GEMINI_API_KEY in the Secrets panel (Settings menu)." });
+         return res.status(401).json({ error: "Invalid API key. Please configure a valid GEMINI_API_KEY1 in the Secrets panel (Settings menu)." });
       }
       res.status(500).json({ error: error.message || "Internal server error" });
     }

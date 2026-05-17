@@ -4,6 +4,8 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type Message = {
 // ...
@@ -21,6 +23,8 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'ok' | 'loading' | 'error'>('loading');
   const [shortlist, setShortlist] = useState<any[]>([]);
+  const [typeWeight, setTypeWeight] = useState(0.2);
+  const [showComparison, setShowComparison] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,14 +38,13 @@ export default function App() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSendMessage = async (textToSubmit: string) => {
+    if (!textToSubmit.trim() || isLoading) return;
     
     // Using user message
-    const userMsg = { role: 'user', content: input };
+    const userMsg = { role: 'user', content: textToSubmit };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
-    setInput('');
     setIsLoading(true);
 
     try {
@@ -49,7 +52,7 @@ export default function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Skip the very first hardcoded assistant greeting for the API state
-        body: JSON.stringify({ messages: newMessages.slice(1) })
+        body: JSON.stringify({ messages: newMessages.slice(1), typeWeight })
       });
       
       const data = await response.json();
@@ -67,6 +70,19 @@ export default function App() {
       setMessages([...newMessages, { role: 'assistant', content: `Error: ${err.message || 'Sorry, there was an error processing your request.'}`}]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (input.trim()) {
+      handleSendMessage(input);
+      setInput('');
+    }
+  };
+
+  const handleCompare = () => {
+    if (shortlist.length > 0 && !isLoading) {
+      setShowComparison(true);
     }
   };
 
@@ -91,6 +107,24 @@ export default function App() {
                    <span className="h-3 w-3 bg-red-600 rounded-full" title="Error"></span>
                 )}
               </div>
+              <div className="mt-4 flex items-center gap-3">
+                <label className="text-xs font-bold uppercase tracking-widest text-zinc-500 whitespace-nowrap">Search Bias:</label>
+                <div className="flex flex-col w-48">
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={typeWeight}
+                    onChange={(e) => setTypeWeight(parseFloat(e.target.value))}
+                    className="w-full h-1 bg-zinc-200 rounded-none appearance-none cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[8px] font-black uppercase text-zinc-400 mt-1">
+                    <span>Description (0)</span>
+                    <span>Test Type (1)</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 text-left sm:text-right mt-4 sm:mt-0">
               <div>
@@ -113,8 +147,29 @@ export default function App() {
                       {msg.content}
                     </div>
                   ) : (
-                    <div className="max-w-3xl px-6 py-5 bg-white text-black font-medium leading-relaxed border-[3px] border-black shadow-[6px_6px_0_0_#000] whitespace-pre-wrap flex flex-col gap-2">
-                      <div>{msg.content}</div>
+                    <div className="max-w-3xl px-6 py-5 bg-white text-black font-medium leading-relaxed border-[3px] border-black shadow-[6px_6px_0_0_#000] flex flex-col gap-2">
+                      <div className="break-words">
+                        <Markdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-2" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2 mt-4" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-md font-bold mb-1 mt-3" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                            ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-2" {...props} />,
+                            ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-2" {...props} />,
+                            li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                            strong: ({node, ...props}) => <strong className="font-extrabold" {...props} />,
+                            table: ({node, ...props}) => <div className="overflow-x-auto"><table className="min-w-full text-left text-sm whitespace-nowrap mt-4 mb-4 border-[2px] border-black" {...props} /></div>,
+                            thead: ({node, ...props}) => <thead className="tracking-wider border-b-[2px] border-black bg-zinc-100" {...props} />,
+                            th: ({node, ...props}) => <th className="px-4 py-3 font-black uppercase text-xs border-r-[2px] border-black last:border-r-0" {...props} />,
+                            td: ({node, ...props}) => <td className="px-4 py-3 border-r-[2px] border-black border-b-[1px] last:border-r-0" {...props} />,
+                            tr: ({node, ...props}) => <tr className="border-b-[1px] border-black" {...props} />,
+                          }}
+                        >
+                          {msg.content}
+                        </Markdown>
+                      </div>
                       {msg.recommendations && msg.recommendations.length > 0 && (
                         <div className="space-y-3 mt-2 border-t-[3px] border-black pt-4">
                           <p className="font-black uppercase tracking-widest text-sm">Recommended Assessments:</p>
@@ -184,7 +239,10 @@ export default function App() {
                 ))}
               </div>
               <div className="p-4 border-t-[3px] border-black bg-white">
-                <button className="w-full border-[3px] border-black bg-white text-black py-3 font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0_0_#000] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]">
+                <button 
+                  onClick={handleCompare}
+                  disabled={isLoading || shortlist.length < 2}
+                  className="w-full border-[3px] border-black bg-white text-black py-3 font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0_0_#000] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] disabled:opacity-50 disabled:cursor-not-allowed">
                   Compare
                 </button>
               </div>
@@ -225,6 +283,51 @@ export default function App() {
         <span className="hidden sm:inline">Terminal.SHL.01</span>
         <span>©2026 SHL Labs</span>
       </div>
+
+      {showComparison && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-10 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white border-[3px] border-black shadow-[8px_8px_0_0_#000] w-full max-w-6xl max-h-full flex flex-col overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b-[3px] border-black bg-black text-white">
+              <h2 className="text-xl font-black uppercase tracking-widest">Assessment Comparison</h2>
+              <button onClick={() => setShowComparison(false)} className="hover:text-zinc-300 font-bold tracking-widest uppercase text-xs">X Close</button>
+            </div>
+            <div className="p-6 overflow-auto flex-1">
+              <div className="flex gap-6 overflow-x-auto pb-4 items-stretch">
+                {shortlist.map((item, idx) => (
+                  <div key={idx} className="flex-1 min-w-[300px] border-[3px] border-black flex flex-col bg-white">
+                    <div className="p-4 border-b-[3px] border-black bg-zinc-100 flex-shrink-0">
+                      <h3 className="font-black text-lg h-14 line-clamp-2 leading-tight">{item.name}</h3>
+                      <span className="inline-block mt-2 px-2 py-1 bg-black text-white text-[10px] font-black uppercase tracking-widest">{item.test_type}</span>
+                    </div>
+                    <div className="p-4 flex-1 whitespace-pre-wrap text-sm font-medium leading-relaxed bg-white break-words">
+                      <Markdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          h1: ({node, ...props}) => <h1 className="text-xl font-bold mb-2" {...props} />,
+                          h2: ({node, ...props}) => <h2 className="text-lg font-bold mb-2 mt-4" {...props} />,
+                          h3: ({node, ...props}) => <h3 className="text-md font-bold mb-1 mt-3" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                          ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-2" {...props} />,
+                          ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-2" {...props} />,
+                          li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                          strong: ({node, ...props}) => <strong className="font-extrabold" {...props} />,
+                        }}
+                      >
+                        {item.description}
+                      </Markdown>
+                    </div>
+                    <div className="p-4 border-t-[3px] border-black bg-zinc-50 flex-shrink-0">
+                      <a href={item.url} target="_blank" rel="noreferrer" className="flex items-center justify-center w-full border-[2px] border-black py-2 font-black uppercase text-xs hover:bg-black hover:text-white transition-colors">
+                        View Details
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

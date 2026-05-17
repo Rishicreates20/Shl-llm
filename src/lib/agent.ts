@@ -33,11 +33,11 @@ const chatResponseSchema: Schema = {
 let ai: GoogleGenAI | null = null;
 function getAIClient() {
   if (!ai) {
-    if (!process.env.GEMINI_API_KEY) {
-        throw new Error("GEMINI_API_KEY is not set.");
+    if (!process.env.GEMINI_API_KEY1) {
+        throw new Error("GEMINI_API_KEY1 is not set.");
     }
     ai = new GoogleGenAI({ 
-      apiKey: process.env.GEMINI_API_KEY,
+      apiKey: process.env.GEMINI_API_KEY1,
       httpOptions: {
         headers: {
           'User-Agent': 'aistudio-build',
@@ -48,7 +48,7 @@ function getAIClient() {
   return ai;
 }
 
-export async function chatAgent(messages: any[]) {
+export async function chatAgent(messages: any[], typeWeight: number = 0.2) {
     // 1. Extract context for search
     const lastUserMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
     
@@ -57,7 +57,7 @@ export async function chatAgent(messages: any[]) {
     const searchQuery = userMessages.slice(-2).join(' ');
 
     // 2. Retrieve top K candidate items
-    const topCandidates = await retrieveTopK(searchQuery, 10);
+    const topCandidates = await retrieveTopK(searchQuery, 10, typeWeight);
     const catalogDataText = JSON.stringify(topCandidates, null, 2);
 
     // Build the prompt

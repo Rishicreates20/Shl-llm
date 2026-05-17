@@ -19,11 +19,11 @@ let embeddingPromise: Promise<ScrapedCatalogItem[]> | null = null;
 
 function getAIClient() {
   if (!ai) {
-    if (!process.env.GEMINI_API_KEY) {
-        throw new Error("GEMINI_API_KEY is not set.");
+    if (!process.env.GEMINI_API_KEY1) {
+        throw new Error("GEMINI_API_KEY1 is not set.");
     }
     ai = new GoogleGenAI({ 
-      apiKey: process.env.GEMINI_API_KEY,
+      apiKey: process.env.GEMINI_API_KEY1,
       httpOptions: {
         headers: {
           'User-Agent': 'aistudio-build',
@@ -91,7 +91,7 @@ function cosineSimilarity(A: number[], B: number[]) {
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
-export async function retrieveTopK(query: string, k: number = 10): Promise<CatalogItem[]> {
+export async function retrieveTopK(query: string, k: number = 10, typeWeight: number = 0.2): Promise<CatalogItem[]> {
   await loadCatalog();
   const aiClient = getAIClient();
   let queryEmbedding: number[] | undefined;
@@ -117,9 +117,19 @@ export async function retrieveTopK(query: string, k: number = 10): Promise<Catal
   const scoredItems = catalog.map(item => {
     let similarity = item.embedding ? cosineSimilarity(queryEmbedding!, item.embedding) : 0;
     
-    if (item.test_type && query.toLowerCase().includes(item.test_type.toLowerCase())) {
-        similarity += 0.2; // Add weight for matching test_type
-    }
+    // Default weights: if typeWeight is 0.2, desc gets 1.0 (unchanged), and type gets max 0.2
+    // A test_type match gives 0.2 boost by default.
+    // If typeWeight = 1, similarity max is unbounded.
+    // To properly use typeWeight between 0 and 1, we can map:
+    // descWeight = 1 - typeWeight
+    // typeScore = 1.0 if match
+    // we can do: similarity = (similarity * (1.0 - typeWeight)) + (typeScore * typeWeight);
+    
+    let isTypeMatch = item.test_type && query.toLowerCase().includes(item.test_type.toLowerCase());
+    let typeScore = isTypeMatch ? 1.0 : 0.0;
+    
+    // Scale existing embedding similarity to 0..1 for description
+    similarity = similarity * (1.0 - typeWeight) + typeScore * typeWeight;
 
     return { item, similarity };
   });
