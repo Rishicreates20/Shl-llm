@@ -6,6 +6,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Info } from 'lucide-react';
 
 type Message = {
 // ...
@@ -118,7 +119,13 @@ export default function App() {
                 )}
               </div>
               <div className="mt-2 flex items-center gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 whitespace-nowrap">Search Bias:</label>
+                <div className="flex items-center gap-1 relative group">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 whitespace-nowrap">Search Bias:</label>
+                  <Info className="w-3 h-3 text-zinc-400 cursor-help" />
+                  <div className="absolute left-0 top-full mt-2 hidden group-hover:block w-48 p-2 bg-black text-white text-[10px] z-10 shadow-lg border-[2px] border-black pointer-events-none">
+                    Slide towards 0 to prioritize matches based on your semantic description. Slide towards 1 to prioritize exact matches for test types.
+                  </div>
+                </div>
                 <div className="flex flex-col w-32 sm:w-40">
                   <input
                     type="range"
